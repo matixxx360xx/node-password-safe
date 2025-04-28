@@ -5,9 +5,7 @@ const crypto = require('crypto');
 
 class Vault {
     constructor() {
-        this.masterPassword = null;
-        this.key = null;
-        this.salt = null;
+       this.tab = [];
     }
 
     generateKey(password, salt = null) {
@@ -29,11 +27,30 @@ class Vault {
         return key === this.key;
     }
 
+    viewPassword() {
+        console.log("Twoje hasła:");
+        if (this.tab.length === 0) {
+            console.log('Brak zapisanych haseł.');
+            return;
+        }
+        this.tab.forEach((haslo, index) => {
+            console.log(`${index + 1}- ${haslo}`);
+        });
+        console.log("")
+    }
+
+    dodawanieHasla(haslo) {
+        this.tab.push(haslo);
+        console.log('Hasło dodane do menedżera.');
+    }
+
     saveFile(filename = 'menadzer.json') {
         const data = {
             key: this.key,
-            salt: this.salt
+            salt: this.salt,
+            hasla: this.tab
         };
+        
         fs.writeFileSync(filename, JSON.stringify(data, null, 2), 'utf-8');
         console.log('Dane zapisane do pliku.');
     }
@@ -45,6 +62,7 @@ class Vault {
                    const data = JSON.parse(content);
                    this.key = data.key;
                    this.salt = data.salt;
+                   this.tab = data.hasla || [];
                    return true;
                   
                }else{
@@ -67,9 +85,11 @@ function main(){
     const fileLoaded = vault.loadFile();
 
     if (!fileLoaded) {
-        const masterPassword = prompt('Ustaw hasło główne: ');
+        let masterPassword = prompt('Ustaw hasło główne: ');
+        while(!isNaN(masterPassword)){
+           masterPassword = prompt('Ustaw hasło główne: ');
+        }
         const { key, salt } = vault.generateKey(masterPassword);
-        vault.masterPassword = masterPassword;
         vault.key = key;
         vault.salt = salt;
         vault.saveFile();
@@ -88,13 +108,25 @@ function main(){
    
 
     while(true){
+        console.log('1. Wyświetl dane');
+        console.log('2. Dodaj haslo do menadżera');
+        console.log('3. Wyjście');
+
         let option = prompt('Wybierz opcje: ');
         
         switch(option){
             case '1':
-                 
+                vault.viewPassword()
                 break;
             case '2':
+                let haslo = prompt('Podaj hasło do dodania: ');
+                while(!isNaN(haslo)){
+                    haslo = prompt('Podaj hasło do dodania: ');
+                }
+                vault.dodawanieHasla(haslo);
+                vault.saveFile();
+                break;
+            case '3':
                 console.log('Wyjście z programu.');
                 return;
             default:
