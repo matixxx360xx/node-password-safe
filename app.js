@@ -34,7 +34,7 @@ class Vault {
             return;
         }
         this.tab.forEach((haslo, index) => {
-            console.log(`${index + 1}- ${haslo}`);
+            console.log(`${index+1} ${haslo}`);
         });
         console.log("")
     }
@@ -119,10 +119,15 @@ function main(){
                 vault.viewPassword()
                 break;
             case '2':
+                let strona = prompt('Podaj nazwę strony: ');  
+                while(!isNaN(strona)){
+                    strona = prompt('Podaj nazwę strony: ');
+                }      
                 let haslo = prompt('Podaj hasło do dodania: ');
                 while(!isNaN(haslo)){
                     haslo = prompt('Podaj hasło do dodania: ');
                 }
+                haslo = strona + ' - ' + haslo;
                 vault.dodawanieHasla(haslo);
                 vault.saveFile();
                 break;
