@@ -38,6 +38,29 @@ class Vault {
         });
         console.log("")
     }
+    PasswordsByName(fragment){
+        let results = [];
+        this.tab.forEach((v) => {
+            results.push(v.split(" - ")[0]); 
+        });
+       
+        if(results.includes(fragment)){
+        this.tab.forEach((v) => {
+            let page = v.split(" - ")[0];  
+            let password = v.split(" - ")[1]; 
+            
+            if(page == fragment){
+                console.log(password); 
+            }
+        });
+        }else{
+            console.log("nie ma tego");
+            
+        }
+        
+        console.log("")
+    }
+
 
     dodawanieHasla(haslo) {
         this.tab.push(haslo);
@@ -116,7 +139,13 @@ function main(){
         
         switch(option){
             case '1':
-                vault.viewPassword()
+                const czyFiltrowac = prompt('Czy chcesz przefiltrować hasła po nazwie strony? (t/n): ').toLowerCase();
+                if(czyFiltrowac ==='t') {
+                    const fragment = prompt('Podaj nazwę lub fragment strony: ');
+                    vault.PasswordsByName(fragment);
+                } else {
+                    vault.viewPassword();
+                }
                 break;
             case '2':
                 let strona = prompt('Podaj nazwę strony: ');  
